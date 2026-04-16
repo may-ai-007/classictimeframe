@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title data-i18n="brand">时光相框 · 摇出你的时光</title>
+    <meta name="description" content="时光相框(TimeFrame)是一款沉浸式拍立得风格在线相机，支持盲盒照片、摇一摇显影、移动照片墙、滤镜字体与一键下载，帮助你随时捕捉灵感并分享惊喜回忆。">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="theme-color" content="#1a1a1a">
+    <link rel="canonical" href="">
+    <link rel="alternate" hreflang="zh-CN" href="">
+    <link rel="alternate" hreflang="en" href="">
+    <link rel="alternate" hreflang="x-default" href="">
+    <link rel="preconnect" href="https://fonts.font.im" crossorigin>
+    <link rel="preload" href="./public/images/cam.png" as="image" type="image/png">
+    <meta property="og:title" content="时光相框 · TimeFrame">
+    <meta property="og:description" content="摇一摇就能显影的拍立得小站——记录当下、分享惊喜。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <meta property="og:image:alt" content="时光相框界面预览">
+    <meta property="og:site_name" content="时光相框 TimeFrame">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="">
+    <meta name="twitter:title" content="时光相框 · 摇出你的时光">
+    <meta name="twitter:description" content="摇一摇就能显影的拍立得小站——记录当下、分享惊喜。">
+    <meta name="twitter:image" content="">
+    <meta name="twitter:image:alt" content="时光相框界面预览">
+    <link rel="icon" type="image/png" href="./public/images/cam.png">
+    <link href="https://fonts.font.im/css2?family=Roboto+Mono:wght@500&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "TimeFrame",
+        "url": "",
+        "applicationCategory": "PhotographyApplication",
+        "operatingSystem": "Web",
+        "inLanguage": ["zh-CN", "en"],
+        "description": "时光相框(TimeFrame) 提供拍立得风格的在线拍照体验，支持盲盒照片、摇一摇显影、照片墙和移动端分享。",
+        "featureList": [
+            "盲盒照片玩法",
+            "摇一摇显影",
+            "移动端照片墙",
+            "滤镜与字体切换",
+            "一键下载与分享"
+        ],
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "CNY",
+            "availability": "https://schema.org/InStock"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "TimeFrame"
+        }
+    }
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L2557RWRLT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-L2557RWRLT');
+    </script>
+</head>
+<body>
+
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <!-- 顶部导航栏 -->
+    <div class="top-nav">
+        <div class="nav-logo">
+            <img src="./public/images/cam.png" alt="时光相框" class="logo-img" data-i18n-alt="brand">
+            <h1 class="logo-text" data-i18n="brand">时光相框</h1>
+        </div>
+        <div class="nav-actions">
+            <button class="nav-btn" id="helpBtn" title="帮助" data-i18n-title="help">
+                <img src="./public/images/qa.png" alt="帮助" data-i18n-alt="help">
+            </button>
+            <button class="nav-btn" id="settingsBtn" title="设置" data-i18n-title="settings">
+                <img src="./public/images/set.png" alt="设置" data-i18n-alt="settings">
+            </button>
+            <button class="nav-btn lang-btn" id="langBtn" data-i18n="language">中文</button>
+        </div>
+    </div>
+
+    <!-- 相机 -->
+    <div class="camera-container skin-dark" id="cameraBody">
+        <div class="skin-switch" id="skinBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </div>
+
+        <div class="viewfinder">
+            <video id="video" autoplay playsinline muted></video>
+            <div id="rainbow" style="position:absolute;inset:0;background:linear-gradient(45deg,rgba(255,0,0,0.1),rgba(0,0,255,0.1));mix-blend-mode:overlay;display:none;"></div>
+        </div>
+
+        <div class="settings-row">
+            <div class="toggle-group" id="tmToggle">
+                <div class="toggle-btn" aria-hidden="true"></div>
+                <span class="toggle-label" data-i18n="timeMachine">时光机</span>
+            </div>
+            <div class="toggle-group active" id="autoDevToggle">
+                <div class="toggle-btn" aria-hidden="true"></div>
+                <span class="toggle-label" data-i18n="autoDevelop">自动显影</span>
+            </div>
+        </div>
+        
+        <!-- 主题模式选择器 -->
+        <div class="themes-container" id="themesBox"></div>
+
+        <div class="filters-container" id="filtersBox"></div>
+
+        <div class="action-row">
+            <input type="text" class="input-box" id="caption" data-i18n-placeholder="captionPlaceholder" placeholder="写下此刻的心情..." maxlength="12">
+            <div class="shutter-btn" id="shutter"></div>
+        </div>
+    </div>
+
+    <div id="desk"></div>
+    <div id="flash"></div>
+    
+    <!-- 移动端照片浏览模式 -->
+    <div class="mobile-gallery" id="mobileGallery" style="display: none;">
+        <div class="gallery-header">
+            <button class="gallery-close" id="galleryClose">×</button>
+            <span class="gallery-title" data-i18n="photoGallery">照片墙</span>
+            <button class="gallery-view-toggle" id="viewToggle" data-i18n="gridView">网格</button>
+        </div>
+        <div class="gallery-content" id="galleryContent">
+            <!-- 卡片视图 -->
+            <div class="card-view" id="cardView">
+                <div class="card-container" id="cardContainer"></div>
+                <div class="card-actions">
+                    <button class="card-action-btn" id="cardDelete" data-i18n="delete">删除</button>
+                    <button class="card-action-btn" id="cardDownload" data-i18n="download">下载</button>
+                </div>
+            </div>
+            <!-- 网格视图 -->
+            <div class="grid-view" id="gridView" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <!-- 底部提示 -->
+    <div class="footer-hint" data-i18n="footerHint">点击快门拍照 · 拖拽移动照片 · 双击照片保存</div>
+
+    <!-- 帮助弹窗 -->
+    <div class="modal" id="helpModal" style="display: none;">
+        <div class="modal-content help-modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="aboutModalTitle">关于</h2>
+                <button class="modal-close" id="helpModalClose">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h3 data-i18n="upcomingFeatures">🚀 即将上线功能</h3>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <strong data-i18n="featureMysteryTime">盲盒时间</strong>
+                            <p data-i18n="featureMysteryTimeDesc">自定义盲盒照片的显影时间，让惊喜更可控</p>
+                        </div>
+                        <div class="feature-item">
+                            <strong data-i18n="featureExchangeMystery">交换盲盒</strong>
+                            <p data-i18n="featureExchangeMysteryDesc">与好友交换盲盒照片，分享神秘时刻</p>
+                        </div>
+                        <div class="feature-item">
+                            <strong data-i18n="featureSoundPhoto">留声照片</strong>
+                            <p data-i18n="featureSoundPhotoDesc">为照片添加语音留言，让回忆更有声</p>
+                        </div>
+                        <div class="feature-item">
+                            <strong data-i18n="featureBurstMode">连拍手稿</strong>
+                            <p data-i18n="featureBurstModeDesc">快速连拍多张照片，捕捉精彩瞬间</p>
+                        </div>
+                        <div class="feature-item">
+                            <strong data-i18n="featureShakeCount">摇一摇次数</strong>
+                            <p data-i18n="featureShakeCountDesc">自定义显影所需的摇动次数，增加趣味性</p>
+                        </div>
+
+                        <div class="feature-item">
+                            <strong data-i18n="featureMoreFrames">更多相框样式</strong>
+                            <p data-i18n="featureMoreFramesDesc">持续更新更多精美相框，满足不同风格需求</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="help-section">
+                    <h3 data-i18n="contactTitle">📧 联系我们</h3>
+                    <div class="contact-qrcodes">
+                        <div class="qrcode-item">
+                            <img src="./public/images/wx.jpg" alt="微信公众号" class="qrcode-img" data-i18n-alt="contactWeChatAlt">
+                            <p class="qrcode-name">马里亚纳ai产品漂流记</p>
+                        </div>
+                        <div class="qrcode-item">
+                            <img src="./public/images/red.jpg" alt="小红书" class="qrcode-img" data-i18n-alt="contactRedbookAlt">
+                            <p class="qrcode-name">AI超级码力</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="help-section footer-note">
+                    <p class="footer-note-text" data-i18n="footerNote">当前小站还有一些bug，我搞不定了，就拜托大家了！</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div class="modal" id="settingsModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="settingsTitle">设置</h2>
+                <button class="modal-close" id="settingsModalClose">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3 data-i18n="photoSettings">📷 拍照设置</h3>
+                    <div class="setting-item">
+                        <label data-i18n="frameStyle">相框样式</label>
+                        <div class="frame-selector" id="frameSelector"></div>
+                    </div>
+                    <div class="setting-item">
+                        <label data-i18n="fontStyle">字体样式</label>
+                        <div class="font-selector-grid" id="fontSelectorGrid">
+                            <button class="font-option" data-font="cursive" data-i18n="fontHandwriting">手写体</button>
+                            <button class="font-option" data-font="serif" data-i18n="fontSerif">衬线体</button>
+                            <button class="font-option" data-font="monospace" data-i18n="fontMonospace">等宽体</button>
+                            <button class="font-option" data-font="sans-serif" data-i18n="fontSans">无衬线</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <label data-i18n="paperTexture">相纸纹理</label>
+                        <label class="switch">
+                            <input type="checkbox" id="paperTextureToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label data-i18n="shutterSound">快门音效</label>
+                        <label class="switch">
+                            <input type="checkbox" id="shutterSoundToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-item-with-badge">
+                            <label data-i18n="mysteryPhoto">盲盒照片</label>
+                            <img src="./public/images/xianmian.svg" alt="限时免费" class="free-badge" title="限时免费" data-i18n-alt="limitedFree" data-i18n-title="limitedFree">
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="mysteryPhotoToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item coming-soon">
+                        <label data-i18n="mysteryTime">盲盒时间</label>
+                        <span class="coming-soon-text" data-i18n="comingSoon">即将上线</span>
+                    </div>
+                    <div class="setting-item coming-soon">
+                        <label data-i18n="exchangeMystery">交换盲盒</label>
+                        <span class="coming-soon-text" data-i18n="comingSoon">即将上线</span>
+                    </div>
+                    <div class="setting-item coming-soon">
+                        <label data-i18n="soundPhoto">留声照片</label>
+                        <span class="coming-soon-text" data-i18n="comingSoon">即将上线</span>
+                    </div>
+                    <div class="setting-item coming-soon">
+                        <label data-i18n="burstMode">连拍手稿</label>
+                        <span class="coming-soon-text" data-i18n="comingSoon">即将上线</span>
+                    </div>
+                    <div class="setting-item coming-soon">
+                        <label data-i18n="shakeCount">摇一摇次数</label>
+                        <span class="coming-soon-text" data-i18n="comingSoon">即将上线</span>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3 data-i18n="themeSettings">🎨 主题设置</h3>
+                    <div class="setting-item">
+                        <label data-i18n="darkMode">深色模式</label>
+                        <label class="switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 次数限制提醒弹窗 -->
+    <div class="modal" id="limitModal" style="display: none;">
+        <div class="modal-content limit-modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="limitTitle">拍照次数提醒</h2>
+                <button class="modal-close" id="limitModalClose">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="limit-message" id="limitMessage"></div>
+                <div class="limit-actions">
+                    <button class="limit-btn" id="limitConfirmBtn" data-i18n="limitConfirm">知道了</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1717 @@
+:root {
+    --bg-color: #f7f7f7;
+    --accent-color: #ffad33;
+    --shutter-color: #ff3b30;
+    --text-hint: #999;
+}
+
+* {
+    box-sizing: border-box;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 弹窗内容允许滚动 */
+.modal-content,
+.modal-body,
+.help-modal-content {
+    touch-action: pan-y !important;
+}
+
+/* 弹窗允许滚动 */
+.modal,
+.modal-content,
+.modal-body {
+    touch-action: pan-y !important;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-color);
+    background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+    background-size: 20px 20px;
+    font-family: 'Roboto Mono', monospace;
+}
+
+/* ================= 相机外壳 ================= */
+.camera-container {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    max-width: 400px;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transition: background 0.3s, color 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 皮肤 */
+.skin-dark {
+    background: #1a1a1a;
+    color: #fff;
+    border-top: 4px solid var(--accent-color);
+}
+
+.skin-dark .input-box {
+    background: #333;
+    color: #fff;
+}
+
+.skin-light {
+    background: #fff;
+    color: #333;
+    border: 1px solid #e0e0e0;
+}
+
+.skin-light .input-box {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.skin-light .viewfinder {
+    border-color: #eee;
+}
+
+/* 品牌标（已移除，现在使用顶部导航栏的logo） */
+
+.skin-switch {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.viewfinder {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
+
+/* 控制行 */
+.settings-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    padding: 0 8px;
+    gap: 16px;
+}
+
+.toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+    justify-content: flex-start;
+}
+
+.toggle-btn {
+    width: 40px;
+    height: 22px;
+    background: #555;
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.3s;
+}
+
+.toggle-btn::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.toggle-group.active .toggle-btn {
+    background: var(--accent-color);
+}
+
+.toggle-group.active .toggle-btn::after {
+    transform: translateX(18px);
+}
+
+.toggle-label {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.9;
+    font-family: 'Roboto Mono', 'Roboto', 'ZCOOL KuaiLe', sans-serif;
+    letter-spacing: normal;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 5px 0;
+}
+
+/* 主题模式选择器 */
+.themes-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.theme-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.theme-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.theme-name {
+    font-size: 10px;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    color: inherit;
+}
+
+.filter-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.filter-dot.active {
+    border-color: #fff;
+    transform: scale(1.25);
+    box-shadow: 0 0 0 2px var(--accent-color);
+}
+
+.action-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.input-box {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 14px;
+    text-align: center;
+    outline: none;
+}
+
+.shutter-btn {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--shutter-color);
+    border: 4px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.shutter-btn:active {
+    transform: scale(0.92);
+}
+
+/* ================= 底部提示 ================= */
+.footer-hint {
+    position: fixed;
+    bottom: 25px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--text-hint);
+    font-size: 13px;
+    letter-spacing: 1px;
+    pointer-events: none;
+    z-index: 0;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* ================= 照片 ================= */
+#desk {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+}
+
+.polaroid {
+    position: absolute;
+    width: 250px;
+    background: #fff; /* 最外围白色边框 */
+    padding: 14px 14px 90px 14px; /* 内边距形成白色边框效果 */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    transform-origin: center;
+    cursor: grab;
+    transition:
+        left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+        top 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+        transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.2s,
+        background 0.3s;
+    border-radius: 2px;
+}
+
+/* 不同相框样式的背景色 */
+.polaroid[data-frame-type="classic"] {
+    background: #FFFFFF;
+}
+
+.polaroid[data-frame-type="vintage"] {
+    background: #FFF8DC;
+}
+
+.polaroid[data-frame-type="modern"] {
+    background: #1A1A1A;
+    color: #FFFFFF;
+}
+
+.polaroid[data-frame-type="pastel"] {
+    background: #FFE5E5;
+}
+
+.polaroid[data-frame-type="ocean"] {
+    background: #B0E0E6;
+}
+
+/* 相纸纹理效果 - 应用到整个polaroid */
+.polaroid.has-paper-texture {
+    position: relative;
+}
+
+.polaroid.has-paper-texture::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.6;
+}
+
+.polaroid.has-paper-texture::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.1) 100%);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.3;
+}
+
+.polaroid:active {
+    cursor: grabbing;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+    z-index: 9999 !important;
+}
+
+.photo-frame {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    /* 确保照片区域有白色背景，形成相框效果 */
+}
+
+.photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.5s linear;
+    pointer-events: none;
+}
+
+.develop-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 20, 20, 0.9);
+    color: white;
+    opacity: 1;
+    transition: opacity 0.5s;
+    pointer-events: none;
+}
+
+/* 删除按钮 */
+.close-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 28px;
+    height: 28px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.close-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke: #ff3b30;
+    stroke-width: 3;
+}
+
+.polaroid:hover .close-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.p-text {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+    font-family: 'ZCOOL KuaiLe', 'Comic Sans MS', cursive;
+    font-size: 24px;
+    color: #333;
+    pointer-events: none;
+    line-height: 1.1;
+}
+
+.p-text span {
+    max-width: 100%;
+    word-break: break-all;
+}
+
+.p-text small {
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+#flash {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2000;
+    transition: opacity 0.1s;
+}
+
+/* ================= 顶部导航栏 ================= */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 2001;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.logo-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    font-family: 'ZCOOL KuaiLe', cursive;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background 0.2s;
+    padding: 0;
+}
+
+.nav-btn img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.nav-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.lang-btn {
+    display: none;
+}
+
+/* ================= 摇一摇指示器 ================= */
+.shake-indicator {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 16px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    min-width: 200px;
+    text-align: center;
+}
+
+/* ================= 弹窗 ================= */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    touch-action: pan-y;
+}
+
+.help-modal-content {
+    max-width: 500px;
+    max-height: 80vh;
+    width: 100%;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    min-height: 0;
+    touch-action: pan-y;
+}
+
+.help-section {
+    margin-bottom: 24px;
+}
+
+.help-section h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.help-section p {
+    margin: 8px 0;
+    line-height: 1.6;
+    color: #666;
+}
+
+.faq-item {
+    margin: 16px 0;
+}
+
+.faq-item p {
+    margin: 4px 0;
+}
+
+/* 功能列表样式 */
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.feature-item {
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-color);
+}
+
+.feature-item strong {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.feature-item p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* 二维码样式 */
+.contact-qrcodes {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+}
+
+.qrcode-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.qrcode-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    object-fit: cover;
+}
+
+.qrcode-name {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin: 0;
+}
+
+/* 底部说明文字 */
+.footer-note {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.footer-note-text {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    line-height: 1.6;
+    margin: 0;
+    font-style: italic;
+}
+
+/* 水印样式 */
+.watermark-overlay {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: 'Roboto Mono', monospace;
+    pointer-events: none;
+    z-index: 10;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.photo-frame {
+    position: relative;
+}
+
+/* 次数限制弹窗 */
+.limit-modal-content {
+    max-width: 400px;
+    width: 90%;
+}
+
+.limit-message {
+    padding: 20px 0;
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.6;
+}
+
+.limit-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.limit-btn {
+    padding: 12px 32px;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.limit-btn:hover {
+    background: #ff9800;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 173, 51, 0.3);
+}
+
+.limit-btn:active {
+    transform: translateY(0);
+}
+
+.settings-section {
+    margin-bottom: 24px;
+}
+
+.settings-section h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.setting-item label {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* 开关样式 */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+    background-color: var(--accent-color);
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* 相框选择器 */
+.frame-selector {
+    display: flex;
+    gap: 12px;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    max-width: 100%;
+}
+
+.frame-selector::-webkit-scrollbar {
+    height: 4px;
+}
+
+.frame-selector::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 2px;
+}
+
+.frame-selector::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 2px;
+}
+
+.frame-option {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0;
+}
+
+.frame-option:hover {
+    transform: scale(1.05);
+    border-color: var(--accent-color);
+}
+
+.frame-option.active {
+    border-color: var(--accent-color);
+    border-width: 3px;
+    box-shadow: 0 0 0 2px rgba(255, 173, 51, 0.2);
+}
+
+/* 字体选择器 */
+.font-selector {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.font-selector:hover {
+    border-color: var(--accent-color);
+}
+
+.font-selector:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(255, 173, 51, 0.2);
+}
+
+/* 字体选择器网格（平铺） */
+.font-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+    overflow: visible;
+    padding-bottom: 0;
+}
+
+.font-option {
+    padding: 6px 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 11px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.font-option:hover {
+    border-color: var(--accent-color);
+    background: #fff9f0;
+}
+
+.font-option.active {
+    border-color: var(--accent-color);
+    background: var(--accent-color);
+    color: white;
+    font-weight: 500;
+}
+
+/* 设置项带标签 */
+.setting-item-with-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.free-badge {
+    width: 60px;
+    height: 20px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+/* 即将上线样式 */
+.setting-item.coming-soon {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.coming-soon-text {
+    font-size: 12px;
+    color: #999;
+    font-style: italic;
+}
+
+/* ================= 移动端照片墙 ================= */
+.mobile-gallery {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 2500;
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+}
+
+.gallery-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gallery-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.gallery-view-toggle {
+    padding: 8px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.gallery-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-view {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+}
+
+.card-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 20px 20px 100px 20px; /* 底部留出按钮空间 */
+    -webkit-overflow-scrolling: touch;
+    min-height: 0;
+}
+
+.mobile-card {
+    width: 90%;
+    max-width: 400px;
+    background: transparent;
+    border-radius: 0;
+    overflow: visible;
+    box-shadow: none;
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-photo {
+    width: 100%;
+    position: relative;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-photo-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: 100%;
+}
+
+.card-photo .watermark-overlay {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: 'Roboto Mono', monospace;
+    pointer-events: none;
+    z-index: 10;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.card-text {
+    padding: 16px 12px 8px 12px;
+    text-align: center;
+    background: transparent;
+    width: 100%;
+}
+
+.card-text span {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 4px;
+    font-weight: 500;
+    color: inherit;
+}
+
+.card-text small {
+    display: block;
+    font-size: 14px;
+    opacity: 0.7;
+    margin-top: 4px;
+    color: inherit;
+}
+
+.card-info {
+    padding: 12px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    background: transparent;
+    border-radius: 0;
+    margin-top: 12px;
+    font-weight: 500;
+}
+
+.card-actions {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.95);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2600;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.card-action-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.card-action-btn:active {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(0.98);
+}
+
+.card-action-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.grid-view {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 16px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.grid-item {
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-photos {
+    text-align: center;
+    color: #999;
+    padding: 40px 20px;
+    font-size: 16px;
+}
+
+.gallery-entry-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: none;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 
+                0 4px 12px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.08),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+    z-index: 200;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+}
+
+.gallery-entry-btn img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.gallery-entry-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 
+                0 1px 4px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ================= 移动端Z轴分层架构优化 ================= */
+@media (max-width: 768px) {
+    /* Layer 1: 全屏取景框 */
+    body {
+        overflow: hidden;
+        background: #000 !important; /* 移动端背景改为黑色 */
+        background-image: none !important; /* 移除网格背景 */
+    }
+    
+    #desk {
+        position: fixed;
+        inset: 0;
+        z-index: 20; /* 照片输出层 */
+        pointer-events: none;
+    }
+    
+    .camera-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw !important; /* 确保全宽 */
+        height: 100vh !important; /* 确保全高 */
+        max-width: 100% !important;
+        border-radius: 0;
+        padding: 0;
+        z-index: 0; /* 底层取景框 */
+        background: #000;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        transform: none !important; /* 移除可能的transform */
+        overflow: visible !important; /* 确保子元素不被裁剪 */
+    }
+    
+    .viewfinder {
+        flex: 1;
+        width: 100%;
+        aspect-ratio: auto;
+        border-radius: 0;
+        border: none;
+    }
+    
+    .viewfinder video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    /* Layer 2: 悬浮操作层 */
+    .top-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10; /* 中层操作UI */
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        height: 50px;
+        padding: 0 12px;
+    }
+    
+    .top-nav .logo-text,
+    .top-nav .nav-btn {
+        color: #fff !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    }
+    
+    .camera-container .settings-row {
+        position: fixed !important;
+        bottom: 92px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100vw !important;
+        z-index: 998 !important;
+        background: rgba(0, 0, 0, 0.7) !important;
+        backdrop-filter: blur(10px) !important;
+        padding: 4px 12px !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
+        clip: unset !important;
+        clip-path: none !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 8px !important;
+        height: 32px !important;
+    }
+    
+    .camera-container .filters-container {
+        position: fixed !important;
+        bottom: 60px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100vw !important;
+        z-index: 999 !important;
+        background: rgba(0, 0, 0, 0.7) !important;
+        backdrop-filter: blur(10px) !important;
+        padding: 4px 12px !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
+        clip: unset !important;
+        clip-path: none !important;
+        box-sizing: border-box !important;
+        height: 32px !important;
+        min-height: 32px !important;
+    }
+    
+    .camera-container .toggle-group {
+        flex: 0 0 auto !important;
+        min-width: 0 !important;
+        display: flex !important;
+        align-items: center !重要;
+        justify-content: flex-start !important;
+        gap: 4px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        white-space: nowrap !important;
+        flex-wrap: nowrap !important;
+        height: 20px !important;
+    }
+    
+    .camera-container .toggle-btn {
+        flex-shrink: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .camera-container .toggle-btn {
+        width: 32px !important;
+        height: 18px !important;
+        flex-shrink: 0 !important;
+        position: relative !important;
+    }
+    
+    .camera-container .toggle-btn::after {
+        content: '' !important;
+        position: absolute !important;
+        top: 2px !important;
+        left: 2px !important;
+        width: 14px !important;
+        height: 14px !important;
+        background: white !important;
+        border-radius: 50% !important;
+        transition: transform 0.3s !important;
+    }
+    
+    .camera-container .toggle-group.active .toggle-btn::after {
+        transform: translateX(14px) !important;
+    }
+    
+    .camera-container .toggle-label {
+        font-size: 12px !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        flex-shrink: 0 !important;
+        height: 20px !important;
+        line-height: 1 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .camera-container .filters-container {
+        display: flex !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+        height: auto !important;
+        min-height: 32px !important;
+    }
+    
+    .camera-container .filter-dot {
+        width: 22px !important;
+        height: 22px !important;
+        flex-shrink: 0 !important;
+        min-width: 22px !important;
+    }
+    
+    .camera-container .action-row {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        z-index: 1000 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: blur(10px) !important;
+        padding-top: 4px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
+        overflow: visible !important;
+        clip: unset !important;
+        clip-path: none !important;
+        height: 60px !important;
+        max-height: 60px !important;
+    }
+    
+    .camera-container .input-box {
+        margin: 0 !important;
+        flex: 1 1 auto !important;
+        min-width: 90px !important;
+        width: auto !important;
+        max-width: calc(100vw - 14px - 8px - 56px - 14px) !important;
+        padding: 6px 10px !important;
+        border-radius: 6px !important;
+        border: none !important;
+        font-size: 12px !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        flex-shrink: 1 !important;
+    }
+    
+    .camera-container .shutter-btn {
+        flex: 0 0 52px !important;
+        width: 52px !important;
+        height: 52px !important;
+        min-width: 52px !important;
+        max-width: 52px !important;
+        margin: 0 !important;
+        flex-shrink: 0 !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        border-width: 2.5px !important;
+    }
+    
+    .shutter-btn {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto;
+        border: 4px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    }
+    
+    .footer-hint {
+        display: none; /* 移动端隐藏底部提示 */
+    }
+    
+    /* 移动端设置页：相框选择器增大尺寸 */
+    .frame-selector {
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(32px, 1fr)) !important;
+        gap: 4px !important;
+        overflow: visible !important;
+        padding: 4px 0 !important;
+        width: 100% !important;
+    }
+    
+    .frame-option {
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 34px !important;
+        aspect-ratio: 1 !important;
+        flex-shrink: 0;
+        padding: 0 !important;
+    }
+    
+    .font-selector-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 6px !important;
+        overflow: visible !important;
+    }
+    
+    .font-option {
+        padding: 6px 4px !important;
+        font-size: 11px !important;
+        width: 100% !important;
+    }
+    
+    .setting-item {
+        padding: 10px 0 !important;
+    }
+    
+    .setting-item label {
+        font-size: 13px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    /* Layer 3: 照片输出层 - 从底部滑出 */
+    .polaroid {
+        width: 80vw;
+        max-width: 320px;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, 120vh) rotate(5deg);
+        z-index: 20;
+        pointer-events: auto;
+        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .polaroid.ejected {
+        transform: translate(-50%, -50%) rotate(-2deg);
+    }
+    
+    /* 照片可以下滑收起 */
+    .polaroid.swiping {
+        transition: none;
+    }
+    
+    /* 移动端浮动按钮图标放大 */
+    .gallery-entry-btn img {
+        width: 48px !important;
+        height: 48px !important;
+    }
+    
+    /* 移动端弹窗滚动优化 */
+    .modal {
+        touch-action: pan-y !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .modal-content {
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
+        overscroll-behavior: contain !important;
+        position: relative !important;
+    }
+    
+    .modal-header {
+        flex-shrink: 0 !important;
+        touch-action: none !important;
+    }
+    
+    .modal-body {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
+        max-height: calc(90vh - 80px) !important;
+        overscroll-behavior: contain !important;
+        flex: 1 !important;
+        min-height: 0 !important;
+    }
+    
+    .help-modal-content {
+        touch-action: pan-y !important;
+        overscroll-behavior: contain !important;
+        width: 100% !important;
+        max-width: 500px !important;
+    }
+    
+    .help-section,
+    .feature-list,
+    .feature-item,
+    .contact-qrcodes,
+    .qrcode-item {
+        touch-action: pan-y !important;
+    }
+}
+
+/* 盲盒照片样式 */
+.mystery-polaroid {
+    background: #1a1a1a !important;
+}
+
+.mystery-card {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1a1a;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.mystery-cover {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.mystery-cover:hover {
+    background: linear-gradient(135deg, #3d3d3d 0%, #2a2a2a 100%);
+    transform: scale(1.02);
+}
+
+.mystery-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.mystery-locked {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+    color: #999;
+}
+
+.mystery-locked .mystery-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.6;
+}
+
+.mystery-card.revealed img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mystery-reveal-overlay {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 桌面端隐藏移动端功能 */
+@media (min-width: 769px) {
+    .mobile-gallery,
+    .gallery-entry-btn {
+        display: none !important;
+    }
+}
+
